@@ -8,15 +8,16 @@ namespace Alexya\Tools;
  *
  * Method summary:
  *
- * |    Name    |             Parameters             |   Return type   |                                    Description                                    |
- * |------------|:----------------------------------:|:---------------:|-----------------------------------------------------------------------------------|
- * | startsWith |  `string $base`, `string $starts`  |     `bool`      | Checks that `$base` starts with `$starts`, returns `true` if so, `false` if not.  |
- * | endsWith   |   `string $base`, `string $ends`   |     `bool`      | Checks that `$base` ends with `$ends`, returns `true` if so, `false` if not.      |
- * | contains   | `string $base`, `string/array $str |     `bool`      | Checks that `$base` contains any of `$str`, returns `true` if so, `false if not`. |
- * | snake      |         `string/array $str`        |    `string`     | Returns `$str` as `snake_case`.                                                   |
- * | camel      |         `string/array $str`        |    `string`     | Returns `$str` as `camelCase`.                                                    |
- * | singular   |         `string/array $str`        | `string/arrray` | Returns the singular form of `$str`.                                              |
- * | plural     |         `string/array $str`        | `string/array`  | Returns the plural form of `$str`.                                                |
+ * |    Name    |                    Parameters                    |   Return type   |                                                                Description                                                               |
+ * |------------|:------------------------------------------------:|:---------------:|------------------------------------------------------------------------------------------------------------------------------------------|
+ * | startsWith |         `string $base`, `string $starts`         |     `bool`      | Checks that `$base` starts with `$starts`, returns `true` if so, `false` if not.                                                         |
+ * | endsWith   |          `string $base`, `string $ends`          |     `bool`      | Checks that `$base` ends with `$ends`, returns `true` if so, `false` if not.                                                             |
+ * | contains   |        `string $base`, `string/array $str        |     `bool`      | Checks that `$base` contains any of `$str`, returns `true` if so, `false if not`.                                                        |
+ * | snake      |                `string/array $str`               |    `string`     | Returns `$str` as `snake_case`.                                                                                                          |
+ * | camel      |                `string/array $str`               |    `string`     | Returns `$str` as `camelCase`.                                                                                                           |
+ * | singular   |                `string/array $str`               | `string/arrray` | Returns the singular form of `$str`.                                                                                                     |
+ * | plural     |                `string/array $str`               | `string/array`  | Returns the plural form of `$str`.                                                                                                       |
+ * | trailing   | `string $base`, `string $tail`, `bool $required` |    `string`     | If `$required` is set to `true` (default), returns `$base` with `$tail` (if it's not pressent), if not, returns `$base` without `$tail`. |
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -117,7 +118,7 @@ class Str
      *
      * @return string `$str` as `snake_case`.
      */
-    public function snake($str) : string
+    public static function snake($str) : string
     {
         if(is_array($str)) {
             return strtolower(implode("_", $str));
@@ -161,9 +162,9 @@ class Str
      *
      * @param string|array $str String to parse.
      *
-     * @return string `$str` as `snake_case`.
+     * @return string `$str` as `camelCase`.
      */
-    public function snake($str) : string
+    public static function camel($str) : string
     {
         if(is_array($str)) {
             $ret = $str[0];
@@ -201,11 +202,12 @@ class Str
     public static function plural($word)
     {
         if(is_array($word)) {
+            $ret = [];
             foreach($word as $key => $value) {
-                $word[$key] = Str::plural($word);
+                $ret[$key] = Str::plural($value);
             }
 
-            return $word;
+            return $ret;
         }
 
         if(!is_string($word)) {
@@ -242,5 +244,35 @@ class Str
         }
 
         return Inflector::singular($word);
+    }
+
+    /**
+     * Returns `$base` with trailing `$tail`.
+     *
+     * If `$required` is set to true (default), `$base` with `$tail` will be returned.
+     * If not, `$base` without `$tail` will be returned:
+     *
+     *     Str::trailing("\\Some\\Namespace\\", "\\"); // \Some\Namespace\
+     *     Str::trailing("\\Some\\Namespace\\", "\\", false); // \Some\Namespace
+     *     Str::trailing("SlashRequiredAtTheEnd", "\\"); // SlashRequiredAtTheEnd\
+     *     Str::trailing("SlashRequiredAtTheEnd\", "\\", false); // SlashRequiredAtTheEnd
+     *
+     * @param string $base     Base string.
+     * @param string $tail     Trailing string.
+     * @param bool   $required True if `$base` must end with `$tail`, `false` if not (default = `true`)-
+     */
+    public static function trailing(string $base, string $tail, bool $required = true) : string
+    {
+        if(!Str::endsWith($base, $tail) && $required) {
+            return $base.$tail;
+        }
+
+        if(Str::endsWith($base, $tail) && !$required) {
+            return substr($base, -strlen($tail));
+        }
+
+        // I think all possible combinations are already listed
+        // however, return `$base` by default.
+        return $base;
     }
 }

@@ -72,7 +72,7 @@ class Collection implements ArrayAccess
      *
      * @param array $data The all mighty array.
      */
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
         $this->_data = $data;
     }
@@ -276,6 +276,21 @@ class Collection implements ArrayAccess
     /**
      * Combines this and another array and returns a new object.
      *
+     * The resulting array will contain the values of this array as key and the values
+     * of the parameter as values:
+     *
+     *     $keys = new Collection([
+     *         "foo" => "bar"
+     *     ]);
+     *     $values = new Collection([
+     *         "test" => "test"
+     *     ]);
+     *
+     *     $newCollection = $keys->combine($values);
+     *     // $newCollection = new Collection([
+     *     //     "bar" => "test"
+     *     // ]);
+     *
      * @param array|\Alexya\Tools\Collection $arr Array to combine.
      *
      * @return \Alexya\Tools\Collection The combination of this array and `$arr`.
@@ -296,14 +311,23 @@ class Collection implements ArrayAccess
     /**
      * Appends the contents of an array to this array.
      *
-     * It's bassically the same as `combine` but instead of returning a new
-     * object, the items are appended to this instance.
+     * The indexes with same key will be overwritten.
      *
      * @param array|\Alexya\Tools\Collection $arr Array to append.
      */
     public function append($arr)
     {
-        $this->_data = $this->combine($arr)->getAll();
+        if($arr instanceof Collection) {
+            $arr = $arr->getAll();
+        }
+
+        if(!is_array($arr)) {
+            return;
+        }
+
+        foreach($arr as $key => $value) {
+            $this->_data[$key] = $value;
+        }
     }
 
     /**
