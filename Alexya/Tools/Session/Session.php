@@ -1,5 +1,5 @@
 <?php
-namespace Alexya\Session;
+namespace Alexya\Tools\Session;
 
 /**
  * Session class.
@@ -46,9 +46,9 @@ class Session
     {
         //Start session
         session_start([
-            "name"     => $name,
-            "lifetime" => $lifetime,
-            "path"     => $path
+            "name"            => $name,
+            "cookie_lifetime" => $lifetime,
+            "save_path"       => $path
         ]);
     }
 
@@ -134,7 +134,7 @@ class Session
      *
      * @param string $name Variable name.
      */
-    public function __isset(string $name)
+    public function __unset(string $name)
     {
         return $this->remove($name);
     }
