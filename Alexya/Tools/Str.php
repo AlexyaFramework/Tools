@@ -18,6 +18,7 @@ namespace Alexya\Tools;
  * | singular   |                `string/array $str`               | `string/arrray` | Returns the singular form of `$str`.                                                                                                     |
  * | plural     |                `string/array $str`               | `string/array`  | Returns the plural form of `$str`.                                                                                                       |
  * | trailing   | `string $base`, `string $tail`, `bool $required` |    `string`     | If `$required` is set to `true` (default), returns `$base` with `$tail` (if it's not pressent), if not, returns `$base` without `$tail`. |
+ * | random     |       `int $length`, `string/array $chars`       |    `string`     | Returns a random string of `$length` with `$chars`.                                                                                      |
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -274,5 +275,31 @@ class Str
         // I think all possible combinations are already listed
         // however, return `$base` by default.
         return $base;
+    }
+
+    /**
+     * Generates a random string of `$length` length with `$chars` chars.
+     *
+     * @param int          $length Length of the string to generate.
+     * @param string|array $chars  Chars that the generated string should contain (default = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ").
+     *
+     * @return string `$length` sized random string with `$chars`.
+     */
+    public static function random(int $length, $chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ") : string
+    {
+        if(is_array($chars)) {
+            $chars = implode("", $chars);
+        }
+
+        if(!is_string($chars)) {
+            return "";
+        }
+
+        $str = "";
+        for($i = 0; $i < $length; $i++) {
+            $str .= substr($chars, rand(0, strlen($chars) - 1), 1);
+        }
+
+        return $str;
     }
 }

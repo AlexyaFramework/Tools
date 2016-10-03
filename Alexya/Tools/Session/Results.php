@@ -1,5 +1,5 @@
 <?php
-namespace Alexya\Session;
+namespace Alexya\Tools\Session;
 
 /**
  * Results class.
@@ -116,6 +116,10 @@ class Results
         $results = static::$_session->get("_RESULTS");
 
         for($i = 0; $i < count($results); $i++) {
+            if(!isset($results[$i])) {
+                continue;
+            }
+
             if($offset > 0) {
                 $offset--;
                 continue;
