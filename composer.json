@@ -1,7 +1,7 @@
 {
     "name": "alexya-framework/tools",
     "type": "framework",
-    "version": "3.0.2",
+    "version": "3.1.0",
     "description": "Alexya's Tools utilities",
     "keywords": ["php", "framework", "tools", "php7", "alexya"],
     "license": "GNU",
