@@ -28,14 +28,14 @@ class Results
     /**
      * Session object.
      *
-     * @var \Alexya\Session\Session
+     * @var Session
      */
     private static $_session;
 
     /**
      * Sets session object.
      *
-     * @param \Alexya\Session\Session $session Session where results will be saved.
+     * @param Session $session Session where results will be saved.
      */
     public static function initialize(Session $session)
     {
@@ -56,9 +56,8 @@ class Results
     {
         $results = static::$_session->get("_RESULTS");
 
-        $results[] = [
+        $results[$name] = [
             "type"   => "permanent",
-            "name"   => $name,
             "result" => $result
         ];
 
@@ -75,9 +74,8 @@ class Results
     {
         $results = static::$_session->get("_RESULTS");
 
-        $results[] = [
+        $results[$name] = [
             "type"   => "flash",
-            "name"   => $name,
             "result" => $result
         ];
 
@@ -93,11 +91,7 @@ class Results
     {
         $results = static::$_session->get("_RESULTS");
 
-        for($i = 0; $i < count($results); $i++) {
-            if($result[$i]["name"] == $name) {
-                unset($results[$i]);
-            }
-        }
+        unset($results[$name]);
 
         static::$_session->set("_RESULTS", $results);
     }
@@ -105,33 +99,44 @@ class Results
     /**
      * Returns the results.
      *
-     * @param int $length Length of the array to return.
-     * @param int $offset Array offset.
+     * @param int|string $length Length of the array to return, if string, the name of the result.
+     * @param int        $offset Array offset.
      *
      * @return array Array with `$length` results.
      */
-    public static function get(int $length = -1, int $offset = 0) : array
+    public static function get($length = -1, int $offset = 0) : array
     {
         $ret     = [];
         $results = static::$_session->get("_RESULTS");
 
-        for($i = 0; $i < count($results); $i++) {
-            if(!isset($results[$i])) {
-                continue;
+        if(
+            !is_numeric($length)     &&
+            isset($results[$length])
+        ) {
+            $ret = $results[$length]["result"];
+
+            if($results[$length]["type"] === "flash") {
+                unset($results[$length]);
+
+                static::$_session->set("_RESULTS", $results);
             }
 
+            return $ret;
+        }
+
+        foreach($results as $key => $value) {
             if($offset > 0) {
                 $offset--;
                 continue;
             }
 
-            $ret[] = $results[$i]["result"];
+            $ret[$key] = $$value["result"];
 
-            if($results[$i]["type"] == "flash") {
-                unset($results[$i]);
+            if($value["type"] == "flash") {
+                unset($results[$key]);
             }
 
-            if($length == $i) {
+            if($length-- == 0) {
                 break;
             }
         }
