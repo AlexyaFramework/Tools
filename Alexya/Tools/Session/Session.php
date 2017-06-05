@@ -28,8 +28,10 @@ namespace Alexya\Tools\Session;
  *
  * Example:
  *
- *     $Session = new \Alexya\Session("alexya", (3600 * 24), "sessions");
- *     $Session->foo = "bar";
+ * ```php
+ * $Session = new \Alexya\Session("alexya", (3600 * 24), "sessions");
+ * $Session->foo = "bar";
+ * ```
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
@@ -57,7 +59,7 @@ class Session
      *
      * @param string $name Variable name.
      *
-     * @return bool `true` if `$name` exists as a session variable, `false` if not
+     * @return bool `true` if `$name` exists as a session variable, `false` if not.
      */
     public function exists(string $name) : bool
     {
@@ -75,7 +77,6 @@ class Session
             return;
         }
 
-        session_unset($name);
         unset($_SESSION[$name]);
     }
 
@@ -100,7 +101,7 @@ class Session
     public function get(string $name)
     {
         if(!$this->exists($name)) {
-            return;
+            return null;
         }
 
         return $_SESSION[$name];
@@ -122,7 +123,7 @@ class Session
      *
      * @param string $name Variable name.
      *
-     * @return bool `true` if `$name` exists as a session variable, `false` if not
+     * @return bool `true` if `$name` exists as a session variable, `false` if not.
      */
     public function __isset(string $name) : bool
     {
@@ -136,7 +137,7 @@ class Session
      */
     public function __unset(string $name)
     {
-        return $this->remove($name);
+        $this->remove($name);
     }
 
     /**
@@ -147,7 +148,7 @@ class Session
      */
     public function __set(string $name, $value)
     {
-        return $this->set($name, $value);
+        $this->set($name, $value);
     }
 
     /**

@@ -6,52 +6,54 @@ use \ArrayAccess;
 /**
  * Collection class.
  *
- * This class provides a powerfull way of managing arrays.
+ * This class provides a powerful way of managing arrays.
  *
  * The constructor accepts as parameter the array to manage.
  *
  * Example:
  *
- *     $arr = new \Alexya\Tools\Collection(["test", "foo", "bar", "more", "tests"]);
+ * ```php
+ * $arr = new \Alexya\Tools\Collection(["test", "foo", "bar", "more", "tests"]);
  *
- *     echo $arr[0]; // test
+ * echo $arr[0]; // test
  *
- *     // Loop through all array.
- *     $arr->foreach(function($key, $value) {
- *         echo "{$key} => {$value}\n";
- *     });
- *     // 0 => test
- *     // 1 => foo
- *     // 2 => bar
- *     // 3 => more
- *     // 4 => tests
+ * // Loop through all array.
+ * $arr->foreach(function($key, $value) {
+ *     echo "{$key} => {$value}\n";
+ * });
+ * // 0 => test
+ * // 1 => foo
+ * // 2 => bar
+ * // 3 => more
+ * // 4 => tests
  *
- *     // Enhanced foreach loop.
- *     $arr->foreachElse(function($key, $value) {
- *         echo "{$key} => {$value}\n";
- *     }, function() {
- *         echo "The array is empty!";
- *     });
+ * // Enhanced foreach loop.
+ * $arr->foreachElse(function($key, $value) {
+ *     echo "{$key} => {$value}\n";
+ * }, function() {
+ *     echo "The array is empty!";
+ * });
  *
- *     // Make a new array by filtering the current one.
- *     $newArr = $arr->filter(function($key, $value) {
- *         return $key % 2 == 0;
- *     });
- *     // $newArr = new \Alexya\Tools\Collection([
- *     //     "test",
- *     //     "bar",
- *     //     "tests",
- *     // ]);
+ * // Make a new array by filtering the current one.
+ * $newArr = $arr->filter(function($key, $value) {
+ *     return $key % 2 == 0;
+ * });
+ * // $newArr = new \Alexya\Tools\Collection([
+ * //     "test",
+ * //     "bar",
+ * //     "tests",
+ * // ]);
  *
- *     // You can also modify all items of the array by walking it
- *     $newArr->wal(function($key, $value) {
- *         return [$key, strtoupper($value)];
- *     });
- *     // $newArr = new \Alexya\Tools\Collection([
- *     //     "TEST",
- *     //     "BAR",
- *     //     "TESTS",
- *     // ]);
+ * // You can also modify all items of the array by walking it
+ * $newArr->wal(function($key, $value) {
+ *     return [$key, strtoupper($value)];
+ * });
+ * // $newArr = new \Alexya\Tools\Collection([
+ * //     "TEST",
+ * //     "BAR",
+ * //     "TESTS",
+ * // ]);
+ * ```
  *
  * @see https://stackoverflow.com/questions/3432257/difference-between-array-map-array-walk-and-array-filter
  * For more information about `map`, `filter`, `walk` and `accumulate` methods.
@@ -82,9 +84,11 @@ class Collection implements ArrayAccess
      *
      * The callback must accept as parameter they key and the value of the item:
      *
-     *     $arr->foreach(function($key, $value) {
-     *         echo "{$key} => {$value}";
-     *     });
+     * ```php
+     * $arr->foreach(function($key, $value) {
+     *     echo "{$key} => {$value}";
+     * });
+     * ```
      *
      * @param callable $foreach Callback to execute on each item.
      */
@@ -101,11 +105,14 @@ class Collection implements ArrayAccess
      *
      * The callback must accept as parameter they key and the value of the item:
      *
-     *     $arr->foreachElse(function($key, $value) {
-     *         echo "{$key} => {$value}";
-     *     }, function() {
-     *         echo "The array is empty!";
-     *     });
+     * ```php
+     * $arr->foreachElse(function($key, $value) {
+     *     echo "{$key} => {$value}";
+     * }, function() {
+     *     echo "The array is empty!";
+     * });
+     * ```
+     *
      * @param callable $foreach Callback to execute on each item.
      * @param callable $else    Callback to execute if the array is empty.
      */
@@ -113,9 +120,11 @@ class Collection implements ArrayAccess
     {
         if(empty($this->_data)) {
             $else();
-        } else {
-            $this->foreach($foreach);
+
+            return;
         }
+
+        $this->foreach($foreach);
     }
 
     /**
@@ -123,25 +132,27 @@ class Collection implements ArrayAccess
      *
      * Example:
      *
-     *     $arr = new \Alexya\Tools\Collection([
-     *         "test",
-     *         "foo",
-     *         "bar",
-     *         "tests"
-     *     ]);
+     * ```php
+     * $arr = new \Alexya\Tools\Collection([
+     *     "test",
+     *     "foo",
+     *     "bar",
+     *     "tests"
+     * ]);
      *
-     *     $newArr = $arr->filter(function($key, $value) {
-     *         return $key % 2 == 0;
-     *     });
-     *     // $newArr = new \Alexya\Tools\Collection([
-     *     //     "test",
-     *     //     "bar",
-     *     //     "tests",
-     *     // ]);
+     * $newArr = $arr->filter(function($key, $value) {
+     *     return $key % 2 == 0;
+     * });
+     * // $newArr = new \Alexya\Tools\Collection([
+     * //     "test",
+     * //     "bar",
+     * //     "tests",
+     * // ]);
+     * ```
      *
      * @param callable $filter Filter to execute.
      *
-     * @return \Alexya\Tools\Collection New array with filtered items.
+     * @return Collection New array with filtered items.
      */
     public function filter(callable $filter) : Collection
     {
@@ -153,28 +164,30 @@ class Collection implements ArrayAccess
      *
      * Example:
      *
-     *     $arr = new \Alexya\Tools\Collection([
-     *         "test",
-     *         "foo",
-     *         "bar",
-     *         "tests"
-     *     ]);
+     * ```php
+     * $arr = new \Alexya\Tools\Collection([
+     *     "test",
+     *     "foo",
+     *     "bar",
+     *     "tests"
+     * ]);
      *
-     *     $newArr = $arr->map(function($key, $value) {
-     *         $value = strtoupper($value);
+     * $newArr = $arr->map(function($key, $value) {
+     *     $value = strtoupper($value);
      *
-     *         return $value;
-     *     });
-     *     // $newArr = new \Alexya\Tools\Collection([
-     *     //     "TEST",
-     *     //     "FOO",
-     *     //     "BAR",
-     *     //     "TESTS"
-     *     // ]);
+     *     return $value;
+     * });
+     * // $newArr = new \Alexya\Tools\Collection([
+     * //     "TEST",
+     * //     "FOO",
+     * //     "BAR",
+     * //     "TESTS"
+     * // ]);
+     * ```
      *
      * @param callable $callback Callback to apply to the array.
      *
-     * @return \Alexya\Tools\Collection Mapped array.
+     * @return Collection Mapped array.
      */
     public function map(callable $callback) : Collection
     {
@@ -197,24 +210,26 @@ class Collection implements ArrayAccess
      *
      * Example:
      *
-     *     $arr = new \Alexya\Tools\Collection([
-     *         "test",
-     *         "foo",
-     *         "bar",
-     *         "tests"
-     *     ]);
+     * ```php
+     * $arr = new \Alexya\Tools\Collection([
+     *     "test",
+     *     "foo",
+     *     "bar",
+     *     "tests"
+     * ]);
      *
-     *     $arr->walk(function($key, $value) {
-     *         $value = strtoupper($value);
+     * $arr->walk(function($key, $value) {
+     *     $value = strtoupper($value);
      *
-     *         return [$key, $value];
-     *     });
-     *     // $arr = new \Alexya\Tools\Collection([
-     *     //     "TEST",
-     *     //     "FOO",
-     *     //     "BAR",
-     *     //     "TESTS"
-     *     // ]);
+     *     return [$key, $value];
+     * });
+     * // $arr = new \Alexya\Tools\Collection([
+     * //     "TEST",
+     * //     "FOO",
+     * //     "BAR",
+     * //     "TESTS"
+     * // ]);
+     * ```
      *
      * @param callable $callback Callback to apply to the array.
      */
@@ -242,22 +257,24 @@ class Collection implements ArrayAccess
      *
      * Example:
      *
-     *     $arr = new \Alexya\Tools\Collection([
-     *         "test",
-     *         "foo",
-     *         "bar",
-     *         "tests"
-     *     ]);
+     * ```php
+     * $arr = new \Alexya\Tools\Collection([
+     *     "test",
+     *     "foo",
+     *     "bar",
+     *     "tests"
+     * ]);
      *
-     *     $arr->accumulate(function($key, $value, $accumulator) {
-     *         echo "Previous value {$accumulator}, current value {$value}";
+     * $arr->accumulate(function($key, $value, $accumulator) {
+     *     echo "Previous value {$accumulator}, current value {$value}";
      *
-     *         return $value;
-     *     }, "");
-     *     // Previous value , current value test
-     *     // Previous value test, current value foo
-     *     // Previous value foo, current value bar
-     *     // Previous value bar, current value tests
+     *     return $value;
+     * }, "");
+     * // Previous value , current value test
+     * // Previous value test, current value foo
+     * // Previous value foo, current value bar
+     * // Previous value bar, current value tests
+     * ```
      *
      * @param callable $callback    Callback to apply to each element.
      * @param mixed    $accumulator Initial accumulator.
@@ -279,17 +296,19 @@ class Collection implements ArrayAccess
      * The resulting array will contain the values of this array as key and the values
      * of the parameter as values:
      *
-     *     $keys = new Collection([
-     *         "foo" => "bar"
-     *     ]);
-     *     $values = new Collection([
-     *         "test" => "test"
-     *     ]);
+     * ```php
+     * $keys = new Collection([
+     *    "foo" => "bar"
+     * ]);
+     * $values = new Collection([
+     *     "test" => "test"
+     * ]);
      *
-     *     $newCollection = $keys->combine($values);
-     *     // $newCollection = new Collection([
-     *     //     "bar" => "test"
-     *     // ]);
+     * $newCollection = $keys->combine($values);
+     * // $newCollection = new Collection([
+     * //     "bar" => "test"
+     * // ]);
+     * ```
      *
      * @param array|\Alexya\Tools\Collection $arr Array to combine.
      *
@@ -297,7 +316,7 @@ class Collection implements ArrayAccess
      */
     public function combine($arr) : Collection
     {
-        if($arr instanceof \Alexya\Tools\Collection) {
+        if($arr instanceof Collection) {
             $arr = $arr->getAll();
         }
 
@@ -313,7 +332,7 @@ class Collection implements ArrayAccess
      *
      * The indexes with same key will be overwritten.
      *
-     * @param array|\Alexya\Tools\Collection $arr Array to append.
+     * @param array|Collection $arr Array to append.
      */
     public function append($arr)
     {
@@ -328,6 +347,63 @@ class Collection implements ArrayAccess
         foreach($arr as $key => $value) {
             $this->_data[$key] = $value;
         }
+    }
+
+    /**
+     * Walks the array and returns the first occurrence of `$closure`.
+     *
+     * The `$closure` must accept as parameter the current key and value of the array,
+     * perform certain operations and return a boolean indicating if the
+     * index is the one we're looking for.
+     *
+     * Example:
+     *
+     * ```php
+     * $number1 = $collection->find(function($key, $value) {
+     *    return $value == 1;
+     * });
+     * ```
+     *
+     * @param callable $closure Closure to execute.
+     *
+     * @return mixed The index that matches `$closure` or null.
+     */
+    public function find(callable $closure)
+    {
+        foreach($this->getAll() as $key => $value) {
+            if($closure($key, $value)) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Sorts the array based on `$closure`.
+     *
+     * It calls `uasort` with the contents of the array and specified closure.
+     *
+     * Example:
+     *
+     * ```php
+     * $collection = new Collection([0, 5, 1, 2, 3, -1, 4, -2]);
+     *
+     * $collection->sort(function($a, $b) {
+     *     if($a == $b) {
+     *         return 0;
+     *     }
+     *
+     *     return ($a < $b) ? -1 : 1;
+     * });
+     *
+     * // $collection = new Collection([-2, -1, 0, 1, 2, 3, 4, 5]);
+     *
+     * @param callable $closure The comparison function.
+     */
+    public function sort(callable $closure)
+    {
+        uasort($this->_data, $closure);
     }
 
     /**
@@ -373,17 +449,14 @@ class Collection implements ArrayAccess
     /**
      * Returns an index from the array.
      *
-     * @param mixed $key Index key.
+     * @param string $key     Index key.
+     * @param mixed  $default Default value to return.
      *
      * @return mixed `$key`'s value.
      */
-    public function get($key)
+    public function get(string $key, $default = null)
     {
-        if(!isset($this->_data[$key])) {
-            return null;
-        }
-
-        return $this->_data[$key];
+        return ($this->_data[$key] ?? $default);
     }
 
     /**
@@ -447,7 +520,7 @@ class Collection implements ArrayAccess
      * @param mixed $value  Index value.
      * @param bool  $strict Flag indicating that the value must be extactly the same or not (default = `true`).
      */
-    public function deleteByValue($value, bool $strict)
+    public function deleteByValue($value, bool $strict = true)
     {
         foreach($this->_data as $data) {
             $exists = ($strict) ? ($data === $value)
@@ -504,7 +577,7 @@ class Collection implements ArrayAccess
      */
     public function __unset($key)
     {
-        return $this->delete($key);
+        return $this->deleteByKey($key);
     }
     ///////////////////////
     // End Magic Methods //
@@ -555,7 +628,7 @@ class Collection implements ArrayAccess
      */
     public function offsetUnset($key)
     {
-        return $this->delete($key);
+        return $this->deleteByKey($key);
     }
     //////////////////////
     // End Array Access //
