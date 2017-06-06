@@ -1,10 +1,12 @@
 <?php
 namespace Alexya\Tools;
 
-use \ArrayAccess;
+use ArrayAccess;
+use Iterator;
 
 /**
  * Collection class.
+ * =================
  *
  * This class provides a powerful way of managing arrays.
  *
@@ -60,7 +62,7 @@ use \ArrayAccess;
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
-class Collection implements ArrayAccess
+class Collection implements ArrayAccess, Iterator
 {
     /**
      * The all mighty array.
@@ -68,6 +70,13 @@ class Collection implements ArrayAccess
      * @var array
      */
     private $_data = [];
+
+    /**
+     * Iterator position.
+     *
+     * @var int
+     */
+    private $_i = 0;
 
     /**
      * Constructor.
@@ -92,7 +101,7 @@ class Collection implements ArrayAccess
      *
      * @param callable $foreach Callback to execute on each item.
      */
-    public function foreach(callable $foreach)
+    public function foreach(callable $foreach) : void
     {
         array_map($foreach, $this->_data);
     }
@@ -116,7 +125,7 @@ class Collection implements ArrayAccess
      * @param callable $foreach Callback to execute on each item.
      * @param callable $else    Callback to execute if the array is empty.
      */
-    public function foreachElse(callable $foreach, callable $else)
+    public function foreachElse(callable $foreach, callable $else) : void
     {
         if(empty($this->_data)) {
             $else();
@@ -233,7 +242,7 @@ class Collection implements ArrayAccess
      *
      * @param callable $callback Callback to apply to the array.
      */
-    public function walk(callable $callback)
+    public function walk(callable $callback) : void
     {
         $newData = [];
         foreach($this->_data as $key => $value) {
@@ -334,7 +343,7 @@ class Collection implements ArrayAccess
      *
      * @param array|Collection $arr Array to append.
      */
-    public function append($arr)
+    public function append($arr) : void
     {
         if($arr instanceof Collection) {
             $arr = $arr->getAll();
@@ -401,7 +410,7 @@ class Collection implements ArrayAccess
      *
      * @param callable $closure The comparison function.
      */
-    public function sort(callable $closure)
+    public function sort(callable $closure) : void
     {
         uasort($this->_data, $closure);
     }
@@ -465,7 +474,7 @@ class Collection implements ArrayAccess
      * @param mixed $key   Index key.
      * @param mixed $value Index value.
      */
-    public function set($key, $value)
+    public function set($key, $value) : void
     {
         $this->_data[$key] = $value;
     }
@@ -486,7 +495,7 @@ class Collection implements ArrayAccess
      * Checks that a value exists in the array.
      *
      * @param mixed $value  Index value.
-     * @param bool  $strict Flag indicating that the value must be extactly the same or not (default = `true`).
+     * @param bool  $strict Flag indicating that the value must be exactly the same or not (default = `true`).
      *
      * @return bool `true` if `$value` exists as a value in the array, `false` if not.
      */
@@ -509,7 +518,7 @@ class Collection implements ArrayAccess
      *
      * @param mixed $key Index key.
      */
-    public function deleteByKey($key)
+    public function deleteByKey($key) : void
     {
         unset($this->_data[$key]);
     }
@@ -518,9 +527,9 @@ class Collection implements ArrayAccess
      * Deletes an index in the array by its value.
      *
      * @param mixed $value  Index value.
-     * @param bool  $strict Flag indicating that the value must be extactly the same or not (default = `true`).
+     * @param bool  $strict Flag indicating that the value must be exactly the same or not (default = `true`).
      */
-    public function deleteByValue($value, bool $strict = true)
+    public function deleteByValue($value, bool $strict = true) : void
     {
         foreach($this->_data as $data) {
             $exists = ($strict) ? ($data === $value)
@@ -553,9 +562,9 @@ class Collection implements ArrayAccess
      * @param mixed $key   Index key.
      * @param mixed $value Index value.
      */
-    public function __set($key, $value)
+    public function __set($key, $value) : void
     {
-        return $this->set($key, $value);
+        $this->set($key, $value);
     }
 
     /**
@@ -575,9 +584,9 @@ class Collection implements ArrayAccess
      *
      * @param mixed $key Index key.
      */
-    public function __unset($key)
+    public function __unset($key) : void
     {
-        return $this->deleteByKey($key);
+        $this->deleteByKey($key);
     }
     ///////////////////////
     // End Magic Methods //
@@ -604,9 +613,9 @@ class Collection implements ArrayAccess
      * @param mixed $key   Index key.
      * @param mixed $value Index value.
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value) : void
     {
-        return $this->set($key, $value);
+        $this->set($key, $value);
     }
 
     /**
@@ -626,12 +635,64 @@ class Collection implements ArrayAccess
      *
      * @param mixed $key Index key.
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key) : void
     {
-        return $this->deleteByKey($key);
+        $this->deleteByKey($key);
     }
     //////////////////////
     // End Array Access //
     //////////////////////
 
+    ////////////////////
+    // Start Iterator //
+    ////////////////////
+    /**
+     * Return the current element.
+     *
+     * @return mixed Current array element.
+     */
+    public function current()
+    {
+        return array_values($this->getAll())[$this->_i] ?? null;
+    }
+
+    /**
+     * Move forward to next element.
+     */
+    public function next() : void
+    {
+        $this->_i++;
+    }
+
+    /**
+     * Return the key of the current element.
+     *
+     * @return mixed Key of current element.
+     */
+    public function key()
+    {
+        return array_keys($this->getAll())[$this->_i] ?? null;
+    }
+
+    /**
+     * Checks if current position is valid.
+     *
+     * @return bool `true` on success `false` on failure.
+     */
+    public function valid() : bool
+    {
+        return $this->_i <= $this->count();
+    }
+
+    /**
+     * Rewind the Iterator to the first element.
+     *
+     */
+    public function rewind() : void
+    {
+        $this->_i = 0;
+    }
+    //////////////////
+    // End Iterator //
+    //////////////////
 }
