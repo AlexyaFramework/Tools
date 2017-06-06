@@ -3,6 +3,7 @@ namespace Alexya\Tools;
 
 /**
  * Inflector class.
+ * ================
  *
  * This class offers helpers for pluralizing and singularizing
  * english words.
@@ -20,7 +21,6 @@ namespace Alexya\Tools;
  */
 class Inflector
 {
-
     /**
      * Plural inflector rules.
      *

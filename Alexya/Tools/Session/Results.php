@@ -3,6 +3,7 @@ namespace Alexya\Tools\Session;
 
 /**
  * Results class.
+ * ==============
  *
  * This class offers a powerful way of storing variables and keep them between
  * requests.
@@ -37,11 +38,11 @@ class Results
      *
      * @param Session $session Session where results will be saved.
      */
-    public static function initialize(Session $session)
+    public static function initialize(Session $session) : void
     {
         static::$_session = $session;
 
-        if(!static::$_session->exists("_RESULTS")) {
+        if(!static::$_session->keyExists("_RESULTS")) {
             static::$_session->set("_RESULTS", []);
         }
     }
@@ -52,7 +53,7 @@ class Results
      * @param string $name   Result name.
      * @param mixed  $result Result to add.
      */
-    public static function permanent(string $name, $result)
+    public static function permanent(string $name, $result) : void
     {
         $results = static::$_session->get("_RESULTS");
 
@@ -70,7 +71,7 @@ class Results
      * @param string $name   Result name.
      * @param mixed  $result Result to add.
      */
-    public static function flash(string $name, $result)
+    public static function flash(string $name, $result) : void
     {
         $results = static::$_session->get("_RESULTS");
 
@@ -87,7 +88,7 @@ class Results
      *
      * @param string $name Result name.
      */
-    public static function delete(string $name)
+    public static function delete(string $name) : void
     {
         $results = static::$_session->get("_RESULTS");
 

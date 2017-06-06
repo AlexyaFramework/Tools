@@ -3,6 +3,7 @@ namespace Alexya\Tools;
 
 /**
  * String helpers.
+ * ===============
  *
  * This class offers helpers for string manipulation.
  *
@@ -93,11 +94,6 @@ class Str
             }
         }
 
-        if(!is_string($chars)) {
-            // Maybe throw exception?
-            return false;
-        }
-
         if(strpos($str, $chars) !== false) {
             return true;
         }
@@ -126,11 +122,6 @@ class Str
     {
         if(is_array($str)) {
             return strtolower(implode("_", $str));
-        }
-
-        if(!is_string($str)) {
-            // Maybe throw exception?
-            return "";
         }
 
         if(Str::contains($str, " ")) {
@@ -183,11 +174,6 @@ class Str
             return $ret;
         }
 
-        if(!is_string($str)) {
-            // Maybe throw exception?
-            return "";
-        }
-
         $ret = explode(
             "_",
             preg_replace("/(\s|_)+/", "_", $str)
@@ -217,11 +203,6 @@ class Str
             return $ret;
         }
 
-        if(!is_string($word)) {
-            // Exception?
-            return "";
-        }
-
         return Inflector::plural($word);
     }
 
@@ -246,11 +227,6 @@ class Str
             }
 
             return $word;
-        }
-
-        if(!is_string($word)) {
-            // Exception?
-            return "";
         }
 
         return Inflector::singular($word);
@@ -302,10 +278,6 @@ class Str
     {
         if(is_array($chars)) {
             $chars = implode("", $chars);
-        }
-
-        if(!is_string($chars)) {
-            return "";
         }
 
         $str = "";
