@@ -1,8 +1,11 @@
 <?php
 namespace Alexya\Tools\Session;
 
+use Alexya\Tools\Collection;
+
 /**
  * Session class.
+ * ==============
  *
  * This class handles the session.
  *
@@ -35,7 +38,7 @@ namespace Alexya\Tools\Session;
  *
  * @author Manulaiko <manulaiko@gmail.com>
  */
-class Session
+class Session extends Collection
 {
     /**
      * Constructor.
@@ -52,56 +55,50 @@ class Session
             "cookie_lifetime" => $lifetime,
             "save_path"       => $path
         ]);
-    }
 
-    /**
-     * Checks if variable exists in session.
-     *
-     * @param string $name Variable name.
-     *
-     * @return bool `true` if `$name` exists as a session variable, `false` if not.
-     */
-    public function exists(string $name) : bool
-    {
-        return isset($_SESSION[$name]);
+        parent::__construct($_SESSION);
     }
 
     /**
      * Removes a variable from the session.
      *
-     * @param string $name Variable name.
+     * @param mixed $name Variable name.
      */
-    public function remove(string $name)
+    public function deleteByKey($name) : void
     {
-        if(!$this->exists($name)) {
+        if(!$this->keyExists($name)) {
             return;
         }
 
+        parent::deleteByKey($name);
         unset($_SESSION[$name]);
     }
 
     /**
      * Sets a variable.
      *
-     * @param string $name  Variable name.
-     * @param mixed  $value Variable value.
+     * @param mixed $name  Variable name.
+     * @param mixed $value Variable value.
      */
-    public function set(string $name, $value)
+    public function set($name, $value) : void
     {
         $_SESSION[$name] = $value;
+
+        parent::set($name, $value);
     }
 
     /**
      * Returns a variable.
      *
-     * @param string $name Variable name.
+     * @param string $name    Variable name.
+     * @param mixed  $default Default value to return.
      *
      * @return mixed Variable's value.
      */
-    public function get(string $name)
+    public function get(string $name, $default = null)
     {
-        if(!$this->exists($name)) {
-            return null;
+        if(!$this->keyExists($name)) {
+            return $default;
         }
 
         return $_SESSION[$name];
@@ -114,55 +111,4 @@ class Session
     {
         session_destroy();
     }
-
-    /////////////////////////
-    // Start magic methods //
-    /////////////////////////
-    /**
-     * Checks if variable exists in session.
-     *
-     * @param string $name Variable name.
-     *
-     * @return bool `true` if `$name` exists as a session variable, `false` if not.
-     */
-    public function __isset(string $name) : bool
-    {
-        return $this->exists($name);
-    }
-
-    /**
-     * Removes a variable from the session.
-     *
-     * @param string $name Variable name.
-     */
-    public function __unset(string $name)
-    {
-        $this->remove($name);
-    }
-
-    /**
-     * Sets a variable.
-     *
-     * @param string $name  Variable name.
-     * @param mixed  $value Variable value.
-     */
-    public function __set(string $name, $value)
-    {
-        $this->set($name, $value);
-    }
-
-    /**
-     * Returns a variable.
-     *
-     * @param string $name Variable name.
-     *
-     * @return mixed Variable's value.
-     */
-    public function __get(string $name)
-    {
-        return $this->get($name);
-    }
-    ///////////////////////
-    // End magic methods //
-    ///////////////////////
 }
